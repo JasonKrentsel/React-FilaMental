@@ -1,14 +1,42 @@
+import { Divider, List, ListItem, Typography } from "@mui/material";
 import FileSelect from "./components/file-system/FileSelect";
-import useFiles from "./hooks/useFiles";
+import useFiles, { File } from "./hooks/useFiles";
+import { useState } from "react";
 
 function App() {
 	// Handle getting the files from the server
 	const { fileSystem } = useFiles();
+	const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+
+	const handleFileSelect = (file: File) => {
+		setSelectedFiles([...selectedFiles, file]);
+	};
 
 	return (
 		<>
-			<h1>Heading</h1>
+			<Typography variant='h4'>
+				File System Rendering and Selection Test
+			</Typography>
+			<Divider />
 			<FileSelect fileSystem={fileSystem} />
+			<Divider />
+			<Typography variant='h5'>Selected Files</Typography>
+			<Divider />
+			<List>
+				{selectedFiles.length === 0 ? (
+					<ListItem>
+						<Typography variant='body1'>
+							No files selected
+						</Typography>
+					</ListItem>
+				) : (
+					selectedFiles.map((file) => (
+						<ListItem key={file.path}>
+							<Typography variant='body1'>{file.path}</Typography>
+						</ListItem>
+					))
+				)}
+			</List>
 		</>
 	);
 }
