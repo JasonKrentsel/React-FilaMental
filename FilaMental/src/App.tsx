@@ -1,16 +1,16 @@
 import { Divider, List, ListItem, Typography } from "@mui/material";
 import FileSelect from "./components/file-system/FileSelect";
 import useFiles, { File } from "./hooks/useFiles";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 function App() {
 	// Handle getting the files from the server
 	const { fileSystem } = useFiles();
 	const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
 
-	const handleFileSelect = (file: File) => {
-		setSelectedFiles([...selectedFiles, file]);
-	};
+	useEffect(() => {
+		setSelectedFiles(fileSystem.files);
+	}, [fileSystem]);
 
 	return (
 		<>

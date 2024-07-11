@@ -1,6 +1,7 @@
 import { FileSystem } from "../../hooks/useFiles";
 import Folder from "./FolderEntry";
 import File from "./FileEntry";
+import { Divider } from "@mui/material";
 
 interface FileSelectProps {
 	fileSystem: FileSystem;
@@ -14,6 +15,7 @@ const renderFileSystem = (fileSystem: FileSystem) => {
 					{renderFileSystem(directory)}
 				</Folder>
 			))}
+			<Divider />
 			{fileSystem.files.map((file) => (
 				<File key={file.name} file={file} />
 			))}

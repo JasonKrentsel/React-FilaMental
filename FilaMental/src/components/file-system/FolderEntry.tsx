@@ -1,9 +1,10 @@
-import { Stack, Typography, Collapse, Box } from "@mui/material";
+import { Stack, Typography, Collapse, Box, Divider } from "@mui/material";
 import { ReactNode, useState } from "react";
 import { FileSystem } from "../../hooks/useFiles";
 import FolderIcon from "@mui/icons-material/Folder";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { styled } from "@mui/system";
+import "./FileSystem.css";
 
 interface FolderEntryProps {
 	folder: FileSystem;
@@ -30,11 +31,17 @@ const FolderEntry = ({ folder, children }: FolderEntryProps) => {
 				onMouseEnter={() => setIsHovered(true)}
 				onMouseLeave={() => setIsHovered(false)}
 				onClick={() => setIsOpen(!isOpen)}>
-				<FolderIcon />
+				<FolderIcon className='folder-color' />
 				<Typography variant='h6'>{folder.name}</Typography>
-				<ExpandIcon isOpen={isOpen}>
-					<ExpandMoreIcon />
-				</ExpandIcon>
+				<Stack
+					direction='row'
+					justifyContent='flex-end'
+					flexGrow={1}
+					paddingRight='1%'>
+					<ExpandIcon isOpen={isOpen}>
+						<ExpandMoreIcon />
+					</ExpandIcon>
+				</Stack>
 			</Stack>
 
 			<Collapse in={isOpen}>
@@ -42,6 +49,7 @@ const FolderEntry = ({ folder, children }: FolderEntryProps) => {
 					style={{
 						paddingLeft: "5%",
 					}}>
+					<Divider />
 					{folder.files.length === 0 &&
 					folder.directories.length === 0 ? (
 						<Typography variant='body2'>
