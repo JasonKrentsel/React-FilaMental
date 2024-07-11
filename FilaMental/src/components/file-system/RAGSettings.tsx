@@ -3,19 +3,34 @@ import { useState } from "react";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import RemoveCircleIcon from "@mui/icons-material/RemoveCircle";
 import "./RagSettings.css";
+import { File } from "../../hooks/useFiles";
 
 interface RAGSettingsProps {
+	file: File;
 	verbose: boolean;
+	onFileSettingUpdate: (
+		file: File,
+		useRAG: boolean,
+		useVectorStore: boolean,
+		chunkCount: number
+	) => void;
 }
 
-const RAGSettings = ({ verbose }: RAGSettingsProps) => {
+const RAGSettings = ({
+	file,
+	verbose,
+	onFileSettingUpdate,
+}: RAGSettingsProps) => {
 	const [enableRAG, setEnableRAG] = useState(false);
 	const [enableVectorStore, setEnableVectorStore] = useState(false);
 	const [chunkCount, setChunkCount] = useState(2);
 
-	const disableRag = () => {
-		setEnableRAG(false);
-		setEnableVectorStore(false);
+	const handleRAGUpdate = (
+		RAGenabled: boolean,
+		vectorStoreEnabled: boolean,
+		chunkCount: number
+	) => {
+		onFileSettingUpdate(file, RAGenabled, vectorStoreEnabled, chunkCount);
 	};
 
 	return (
@@ -28,14 +43,27 @@ const RAGSettings = ({ verbose }: RAGSettingsProps) => {
 						onChange={(e) => {
 							setEnableRAG(e.target.checked);
 							if (!e.target.checked) {
-								disableRag();
+								setEnableRAG(false);
+								setEnableVectorStore(false);
 							}
+							handleRAGUpdate(
+								e.target.checked,
+								enableVectorStore,
+								chunkCount
+							);
 						}}
 					/>
 					<Typography variant='body1'>enable Vector Store</Typography>
 					<Checkbox
 						checked={enableVectorStore}
-						onChange={(e) => setEnableVectorStore(e.target.checked)}
+						onChange={(e) => {
+							setEnableVectorStore(e.target.checked);
+							handleRAGUpdate(
+								enableRAG,
+								e.target.checked,
+								chunkCount
+							);
+						}}
 						disabled={!enableRAG}
 					/>
 					<Typography variant='body1'>Chunks</Typography>
@@ -44,9 +72,14 @@ const RAGSettings = ({ verbose }: RAGSettingsProps) => {
 							type='number'
 							min='2'
 							value={chunkCount}
-							onChange={(e) =>
-								setChunkCount(Number(e.target.value))
-							}
+							onChange={(e) => {
+								setChunkCount(Number(e.target.value));
+								handleRAGUpdate(
+									enableRAG,
+									enableVectorStore,
+									Number(e.target.value)
+								);
+							}}
 						/>
 					</Box>
 				</Stack>

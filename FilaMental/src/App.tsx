@@ -1,16 +1,47 @@
-import { Divider, List, ListItem, Typography } from "@mui/material";
+import { Divider, List, ListItem, Stack, Typography } from "@mui/material";
 import FileSelect from "./components/file-system/FileSelect";
 import useFiles, { File } from "./hooks/useFiles";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 function App() {
 	// Handle getting the files from the server
 	const { fileSystem } = useFiles();
-	const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+	const [selectedFiles, setSelectedFiles] = useState<
+		{
+			file: File;
+			settingsVectorStore: {
+				useVectorStore: boolean;
+				chunkCount: number;
+			};
+		}[]
+	>([]);
 
-	useEffect(() => {
-		setSelectedFiles(fileSystem.files);
-	}, [fileSystem]);
+	const onFileSettingUpdate = (
+		file: File,
+		useRAG: boolean,
+		useVectorStore: boolean,
+		chunkCount: number
+	) => {
+		let newSelectedFiles = [...selectedFiles];
+
+		const fileIndex = newSelectedFiles.findIndex((f) => f.file === file);
+		if (fileIndex === -1 && useRAG) {
+			newSelectedFiles = [
+				...newSelectedFiles,
+				{ file, settingsVectorStore: { useVectorStore, chunkCount } },
+			];
+		} else if (fileIndex !== -1 && !useRAG) {
+			newSelectedFiles.splice(fileIndex, 1);
+		} else if (fileIndex !== -1) {
+			const newSelectedFileEntry = {
+				file,
+				settingsVectorStore: { useVectorStore, chunkCount },
+			};
+			newSelectedFiles[fileIndex] = newSelectedFileEntry;
+		}
+
+		setSelectedFiles(newSelectedFiles);
+	};
 
 	return (
 		<>
@@ -18,7 +49,10 @@ function App() {
 				File System Rendering and Selection Test
 			</Typography>
 			<Divider />
-			<FileSelect fileSystem={fileSystem} />
+			<FileSelect
+				fileSystem={fileSystem}
+				onFileSettingUpdate={onFileSettingUpdate}
+			/>
 			<Divider />
 			<Typography variant='h5'>Selected Files</Typography>
 			<Divider />
@@ -31,9 +65,23 @@ function App() {
 					</ListItem>
 				) : (
 					selectedFiles.map((file) => (
-						<ListItem key={file.path}>
-							<Typography variant='body1'>{file.path}</Typography>
-						</ListItem>
+						<Stack key={file.file.path} direction='row' spacing={2}>
+							<Typography variant='body1'>
+								{file.file.path}
+							</Typography>
+							<Typography variant='body1'>
+								Vector Store:{" "}
+								{file.settingsVectorStore.useVectorStore
+									? "Enabled"
+									: "Disabled"}
+							</Typography>
+							{file.settingsVectorStore.useVectorStore && (
+								<Typography variant='body1'>
+									Chunk Count:{" "}
+									{file.settingsVectorStore.chunkCount}
+								</Typography>
+							)}
+						</Stack>
 					))
 				)}
 			</List>

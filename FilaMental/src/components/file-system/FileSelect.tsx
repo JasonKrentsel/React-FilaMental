@@ -1,29 +1,37 @@
-import { FileSystem } from "../../hooks/useFiles";
+import { File, FileSystem } from "../../hooks/useFiles";
 import Folder from "./FolderEntry";
-import File from "./FileEntry";
-import { Divider } from "@mui/material";
+import FileEntry from "./FileEntry";
 
 interface FileSelectProps {
 	fileSystem: FileSystem;
+	onFileSettingUpdate: (
+		file: File,
+		useRAG: boolean,
+		useVectorStore: boolean,
+		chunkCount: number
+	) => void;
 }
 
-const renderFileSystem = (fileSystem: FileSystem) => {
-	return (
-		<>
-			{fileSystem.directories.map((directory) => (
-				<Folder key={directory.name} folder={directory}>
-					{renderFileSystem(directory)}
-				</Folder>
-			))}
-			<Divider />
-			{fileSystem.files.map((file) => (
-				<File key={file.name} file={file} />
-			))}
-		</>
-	);
-};
+const FileSelect = ({ fileSystem, onFileSettingUpdate }: FileSelectProps) => {
+	const renderFileSystem = (fileSystem: FileSystem): React.ReactNode => {
+		return (
+			<>
+				{fileSystem.directories.map((directory) => (
+					<Folder key={directory.name} folder={directory}>
+						{renderFileSystem(directory)}
+					</Folder>
+				))}
+				{fileSystem.files.map((file) => (
+					<FileEntry
+						key={file.name}
+						file={file}
+						onFileSettingUpdate={onFileSettingUpdate}
+					/>
+				))}
+			</>
+		);
+	};
 
-const FileSelect = ({ fileSystem }: FileSelectProps) => {
 	return <>{renderFileSystem(fileSystem)}</>;
 };
 
