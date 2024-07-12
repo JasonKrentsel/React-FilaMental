@@ -64,7 +64,13 @@ const useFiles = () => {
 				{
 					name: "folder2",
 					path: "folder2",
-					files: [],
+					files: [
+						{
+							name: "subfile.txt",
+							path: "folder2/subfile.txt",
+							type: "text/plain",
+						},
+					],
 					directories: [
 						{
 							name: "subfolder1",

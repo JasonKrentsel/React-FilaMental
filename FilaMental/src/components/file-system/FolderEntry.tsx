@@ -1,4 +1,4 @@
-import { Stack, Typography, Collapse, Box } from "@mui/material";
+import { Stack, Typography, Collapse, Box, Divider } from "@mui/material";
 import { ReactNode, useState } from "react";
 import { FileSystem } from "../../hooks/useFiles";
 import FolderIcon from "@mui/icons-material/Folder";
@@ -49,6 +49,7 @@ const FolderEntry = ({ folder, children }: FolderEntryProps) => {
 					style={{
 						paddingLeft: "5%",
 					}}>
+					<Divider />
 					{folder.files.length === 0 &&
 					folder.directories.length === 0 ? (
 						<Typography variant='body2'>

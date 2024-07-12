@@ -2,6 +2,8 @@ import { Divider, List, ListItem, Stack, Typography } from "@mui/material";
 import FileSelect from "./components/file-system/FileSelect";
 import useFiles, { File } from "./hooks/useFiles";
 import { useState } from "react";
+import FileUpload from "./components/file-system/FileUpload";
+import NewFolder from "./components/file-system/NewFolder";
 
 function App() {
 	// Handle getting the files from the server
@@ -53,6 +55,10 @@ function App() {
 				fileSystem={fileSystem}
 				onFileSettingUpdate={onFileSettingUpdate}
 			/>
+			<Stack direction='row' spacing={2} padding={2}>
+				<FileUpload />
+				<NewFolder />
+			</Stack>
 			<Divider />
 			<Typography variant='h5'>Selected Files</Typography>
 			<Divider />
@@ -85,6 +91,7 @@ function App() {
 					))
 				)}
 			</List>
+			<Divider />
 		</>
 	);
 }
