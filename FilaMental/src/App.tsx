@@ -4,6 +4,7 @@ import useFiles, { File } from "./hooks/useFiles";
 import { useState } from "react";
 import FileUpload from "./components/file-system/FileUpload";
 import NewFolder from "./components/file-system/NewFolder";
+import ChatInterface, { ChatMessage } from "./components/chat/ChatInterface";
 
 function App() {
 	// Handle getting the files from the server
@@ -43,6 +44,12 @@ function App() {
 		}
 
 		setSelectedFiles(newSelectedFiles);
+	};
+
+	//temporary chat submit function
+	//TODO: implement chat submission, including file context
+	const handleChatSubmit = (chatHistory: ChatMessage[]) => {
+		console.log(chatHistory);
 	};
 
 	return (
@@ -92,6 +99,9 @@ function App() {
 				)}
 			</List>
 			<Divider />
+			<Typography variant='h5'>Chat</Typography>
+			<Divider />
+			<ChatInterface handleChatSubmit={handleChatSubmit} />
 		</>
 	);
 }
