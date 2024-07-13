@@ -24,7 +24,9 @@ const ChatMessageCard = ({ message }: ChatMessageCardProps) => {
 					<Typography variant='caption'>{message.role}</Typography>
 				</Stack>
 				<Divider />
-				<Typography variant='body1'>{message.content}</Typography>
+				<Typography variant='body1' style={{ whiteSpace: "pre-wrap" }}>
+					{message.content}
+				</Typography>
 			</CardContent>
 		</Card>
 	);

@@ -1,10 +1,12 @@
+import { Button, Stack, TextField } from "@mui/material";
 import { useState } from "react";
 
 interface QueryBarProps {
 	handleSubmit: (message: string) => void;
+	handleClear: () => void;
 }
 
-const QueryBar = ({ handleSubmit }: QueryBarProps) => {
+const QueryBar = ({ handleSubmit, handleClear }: QueryBarProps) => {
 	const [message, setMessage] = useState("");
 
 	return (
@@ -12,14 +14,32 @@ const QueryBar = ({ handleSubmit }: QueryBarProps) => {
 			onSubmit={(e) => {
 				e.preventDefault();
 				handleSubmit(message);
+			}}
+			style={{
+				width: "100%",
 			}}>
-			<input
-				type='text'
-				placeholder='chat'
-				value={message}
-				onChange={(e) => setMessage(e.target.value)}
-			/>
-			<button type='submit'>Send</button>
+			<Stack
+				direction='row'
+				spacing={2}
+				alignItems='center'
+				justifyContent='center'>
+				<TextField
+					type='text'
+					label='Message'
+					variant='filled'
+					multiline
+					fullWidth
+					maxRows={4}
+					value={message}
+					onChange={(e) => setMessage(e.target.value)}
+				/>
+				<Button variant='contained' type='submit'>
+					Send
+				</Button>
+				<Button variant='contained' onClick={handleClear}>
+					Clear
+				</Button>
+			</Stack>
 		</form>
 	);
 };

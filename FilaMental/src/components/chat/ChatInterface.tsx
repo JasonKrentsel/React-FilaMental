@@ -16,8 +16,12 @@ const ChatInterface = ({ handleChatSubmit }: ChatInterfaceProps) => {
 	const [chatHistory, setChatHistory] = useState<ChatMessage[]>([]);
 
 	const handleSubmit = (message: string) => {
-		setChatHistory([...chatHistory, { role: "user", content: message }]);
+		setChatHistory([...chatHistory, { role: "User", content: message }]);
 		handleChatSubmit(chatHistory);
+	};
+
+	const handleClear = () => {
+		setChatHistory([]);
 	};
 
 	return (
@@ -27,7 +31,10 @@ const ChatInterface = ({ handleChatSubmit }: ChatInterfaceProps) => {
 				spacing={2}
 				width='100%'
 				alignItems='center'>
-				<QueryBar handleSubmit={handleSubmit} />
+				<QueryBar
+					handleSubmit={handleSubmit}
+					handleClear={handleClear}
+				/>
 				<ChatHistoryDisplay chatHistory={chatHistory} />
 			</Stack>
 		</>
