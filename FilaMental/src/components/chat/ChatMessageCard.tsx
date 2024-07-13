@@ -1,5 +1,5 @@
 import { Card, CardContent, Divider, Stack, Typography } from "@mui/material";
-import { ChatMessage } from "./ChatInterface";
+import { ChatMessage } from "../../services/AI-response";
 import PersonIcon from "@mui/icons-material/Person";
 import SmartToyIcon from "@mui/icons-material/SmartToy";
 
@@ -16,7 +16,7 @@ const ChatMessageCard = ({ message }: ChatMessageCardProps) => {
 					display='flex'
 					alignItems='center'
 					spacing={1}>
-					{message.role === "user" ? (
+					{message.role === "User" ? (
 						<PersonIcon fontSize='small' />
 					) : (
 						<SmartToyIcon fontSize='small' />

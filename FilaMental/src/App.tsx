@@ -4,20 +4,13 @@ import useFiles, { File } from "./hooks/useFiles";
 import { useState } from "react";
 import FileUpload from "./components/file-system/FileUpload";
 import NewFolder from "./components/file-system/NewFolder";
-import ChatInterface, { ChatMessage } from "./components/chat/ChatInterface";
+import ChatInterface from "./components/chat/ChatInterface";
+import { ChatMessage, FileRAG, generateResponse } from "./services/AI-response";
 
 function App() {
 	// Handle getting the files from the server
 	const { fileSystem } = useFiles();
-	const [selectedFiles, setSelectedFiles] = useState<
-		{
-			file: File;
-			settingsVectorStore: {
-				useVectorStore: boolean;
-				chunkCount: number;
-			};
-		}[]
-	>([]);
+	const [selectedFiles, setSelectedFiles] = useState<FileRAG[]>([]);
 
 	const onFileSettingUpdate = (
 		file: File,
@@ -31,25 +24,19 @@ function App() {
 		if (fileIndex === -1 && useRAG) {
 			newSelectedFiles = [
 				...newSelectedFiles,
-				{ file, settingsVectorStore: { useVectorStore, chunkCount } },
+				{ file, settings: { useVectorStore, chunkCount } },
 			];
 		} else if (fileIndex !== -1 && !useRAG) {
 			newSelectedFiles.splice(fileIndex, 1);
 		} else if (fileIndex !== -1) {
 			const newSelectedFileEntry = {
 				file,
-				settingsVectorStore: { useVectorStore, chunkCount },
+				settings: { useVectorStore, chunkCount },
 			};
 			newSelectedFiles[fileIndex] = newSelectedFileEntry;
 		}
 
 		setSelectedFiles(newSelectedFiles);
-	};
-
-	//temporary chat submit function
-	//TODO: implement chat submission, including file context
-	const handleChatSubmit = (chatHistory: ChatMessage[]) => {
-		console.log(chatHistory);
 	};
 
 	return (
@@ -84,14 +71,13 @@ function App() {
 							</Typography>
 							<Typography variant='body1'>
 								Vector Store:{" "}
-								{file.settingsVectorStore.useVectorStore
+								{file.settings.useVectorStore
 									? "Enabled"
 									: "Disabled"}
 							</Typography>
-							{file.settingsVectorStore.useVectorStore && (
+							{file.settings.useVectorStore && (
 								<Typography variant='body1'>
-									Chunk Count:{" "}
-									{file.settingsVectorStore.chunkCount}
+									Chunk Count: {file.settings.chunkCount}
 								</Typography>
 							)}
 						</Stack>
@@ -101,7 +87,7 @@ function App() {
 			<Divider />
 			<Typography variant='h5'>Chat</Typography>
 			<Divider />
-			<ChatInterface handleChatSubmit={handleChatSubmit} />
+			<ChatInterface selectedFiles={selectedFiles} />
 		</>
 	);
 }
