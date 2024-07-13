@@ -5,7 +5,7 @@ import { useState } from "react";
 import FileUpload from "./components/file-system/FileUpload";
 import NewFolder from "./components/file-system/NewFolder";
 import ChatInterface from "./components/chat/ChatInterface";
-import { ChatMessage, FileRAG, generateResponse } from "./services/AI-response";
+import { FileRAG } from "./services/AI-response";
 
 function App() {
 	// Handle getting the files from the server
