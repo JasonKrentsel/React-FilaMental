@@ -16,7 +16,7 @@ const FileSelect = ({ fileSystem, onFileSettingUpdate }: FileSelectProps) => {
 	const renderFileSystem = (fileSystem: FileSystem): React.ReactNode => {
 		return (
 			<>
-				{fileSystem.directories.map((directory) => (
+				{fileSystem.subdirectories.map((directory) => (
 					<Folder key={directory.name} folder={directory}>
 						{renderFileSystem(directory)}
 					</Folder>

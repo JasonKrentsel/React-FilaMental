@@ -6,6 +6,12 @@ class DirectorySerializer(serializers.ModelSerializer):
     model = Directory
     fields = ['full_path', 'name', 'files', 'subdirectories']
 
+  def to_representation(self, instance):
+    representation = super().to_representation(instance)
+    representation['files'] = FileSerializer(instance.files, many=True).data
+    representation['subdirectories'] = DirectorySerializer(instance.subdirectories, many=True).data
+    return representation
+
 class DirectoryCreateSerializer(serializers.ModelSerializer):
     name = serializers.RegexField(
         regex=r'^[a-zA-Z0-9_-]+$',
@@ -32,4 +38,4 @@ class FileSerializer(serializers.ModelSerializer):
 
   class Meta:
     model = File
-    fields = ['file']
+    fields = ['name', 'full_path']

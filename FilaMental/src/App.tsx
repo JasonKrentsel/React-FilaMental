@@ -65,9 +65,12 @@ function App() {
 					</ListItem>
 				) : (
 					selectedFiles.map((file) => (
-						<Stack key={file.file.path} direction='row' spacing={2}>
+						<Stack
+							key={file.file.full_path}
+							direction='row'
+							spacing={2}>
 							<Typography variant='body1'>
-								{file.file.path}
+								{file.file.full_path}
 							</Typography>
 							<Typography variant='body1'>
 								Vector Store:{" "}

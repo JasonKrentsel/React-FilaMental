@@ -1,111 +1,46 @@
 import { useEffect, useState } from "react";
+import axiosInstance from "../services/axiosService";
+import { CanceledError } from "axios";
 
 export interface File {
 	name: string;
-	path: string;
-	type: string;
+	full_path: string;
+	//type: string;
 }
 
 export interface FileSystem {
 	name: string;
-	path: string;
+	full_path: string;
 	files: File[];
-	directories: FileSystem[];
+	subdirectories: FileSystem[];
 }
 
 const useFiles = () => {
 	const [fileSystem, setFileSystem] = useState<FileSystem>({
 		name: "",
-		path: "",
+		full_path: "",
 		files: [],
-		directories: [],
+		subdirectories: [],
 	});
 	const [error, setError] = useState("");
 	const [isLoading, setIsLoading] = useState(false);
 
 	// handle getting the file system from backend
-
-	// for testing purposes, generic file system
 	useEffect(() => {
-		setError("");
-		setIsLoading(false);
+		const controller = new AbortController();
 
-		const testingFileSystem: FileSystem = {
-			name: "root",
-			path: "/",
-			files: [
-				{ name: "file1.txt", path: "file1.txt", type: "text/plain" },
-				{ name: "file2.txt", path: "file2.txt", type: "text/plain" },
-				{ name: "file3.txt", path: "file3.txt", type: "text/plain" },
-			],
-			directories: [
-				{
-					name: "folder1",
-					path: "folder1",
-					files: [
-						{
-							name: "subfile1.txt",
-							path: "folder1/subfile1.txt",
-							type: "text/plain",
-						},
-						{
-							name: "subfile2.txt",
-							path: "folder1/subfile2.txt",
-							type: "text/plain",
-						},
-						{
-							name: "subfile3.txt",
-							path: "folder1/subfile3.txt",
-							type: "text/plain",
-						},
-					],
-					directories: [],
-				},
-				{
-					name: "folder2",
-					path: "folder2",
-					files: [
-						{
-							name: "subfile.txt",
-							path: "folder2/subfile.txt",
-							type: "text/plain",
-						},
-					],
-					directories: [
-						{
-							name: "subfolder1",
-							path: "folder2/subfolder1",
-							files: [
-								{
-									name: "subfile1.txt",
-									path: "folder2/subfolder1/subfile1.txt",
-									type: "text/plain",
-								},
-								{
-									name: "subfile2.txt",
-									path: "folder2/subfolder1/subfile2.txt",
-									type: "text/plain",
-								},
-								{
-									name: "subfile3.txt",
-									path: "folder2/subfolder1/subfile3.txt",
-									type: "text/plain",
-								},
-							],
-							directories: [],
-						},
-					],
-				},
-				{
-					name: "folder3",
-					path: "folder3",
-					files: [],
-					directories: [],
-				},
-			],
-		};
+		setIsLoading(true);
+		axiosInstance
+			.get<FileSystem[]>("/filesystem/dir/")
+			.then((response) => {
+				setFileSystem(response.data[0]);
+			})
+			.catch((error) => {
+				if (!(error instanceof CanceledError)) setError(error.message);
+			})
+			.finally(() => setIsLoading(false));
 
-		setFileSystem(testingFileSystem);
+		return () => controller.abort();
 	}, []);
 
 	return { fileSystem, error, isLoading };

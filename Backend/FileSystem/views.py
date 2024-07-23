@@ -20,7 +20,11 @@ def create_base_directory(request):
 
     return HttpResponse("Base directory created")
 
+class AllDirectoriesViewSet(ModelViewSet):
+    serializer_class = DirectorySerializer
 
+    def get_queryset(self):
+        return Directory.objects.filter(parent=None).all()
 
 class DirectoryViewSet(ModelViewSet):
     serializer_class = DirectorySerializer

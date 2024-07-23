@@ -51,7 +51,7 @@ const FolderEntry = ({ folder, children }: FolderEntryProps) => {
 					}}>
 					<Divider />
 					{folder.files.length === 0 &&
-					folder.directories.length === 0 ? (
+					folder.subdirectories.length === 0 ? (
 						<Typography variant='body2'>
 							This folder is empty
 						</Typography>
