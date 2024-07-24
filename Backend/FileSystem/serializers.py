@@ -30,12 +30,13 @@ class DirectoryCreateSerializer(serializers.ModelSerializer):
         return value
 
 class FileSerializer(serializers.ModelSerializer):
-  def create(self, validated_data):
-    directory_pk = self.context['directory_pk']
-    directory = Directory.objects.get(pk=directory_pk)
-    validated_data['directory'] = directory
-    return super().create(validated_data)
-
   class Meta:
     model = File
     fields = ['name', 'full_path']
+
+class FileUploadSerializer(serializers.Serializer):
+  file = serializers.FileField()
+
+  class Meta:
+    model = File
+    fields = ['file']

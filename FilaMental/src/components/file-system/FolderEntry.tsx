@@ -5,9 +5,12 @@ import FolderIcon from "@mui/icons-material/Folder";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { styled } from "@mui/system";
 import "./FileSystem.css";
+import NewFolderButton from "./NewFolderButton";
+import FileUploadButton from "./FileUploadButton";
 
 interface FolderEntryProps {
 	folder: FileSystem;
+	onFileSystemUpdate: () => void;
 	children?: ReactNode;
 }
 
@@ -18,9 +21,22 @@ const ExpandIcon = styled("div")<{ isOpen: boolean }>(({ isOpen }) => ({
 	alignItems: "center",
 }));
 
-const FolderEntry = ({ folder, children }: FolderEntryProps) => {
+const FolderEntry = ({
+	folder,
+	onFileSystemUpdate,
+	children,
+}: FolderEntryProps) => {
 	const [isHovered, setIsHovered] = useState(false);
 	const [isOpen, setIsOpen] = useState(false);
+
+	const onFileUpload = (file: File) => {
+		folder.files.push({
+			name: file.name,
+			full_path: folder.full_path + "/" + file.name,
+		});
+		setIsOpen(true);
+		onFileSystemUpdate();
+	};
 
 	return (
 		<Box bgcolor={isHovered ? "lightblue" : "transparent"}>
@@ -33,6 +49,17 @@ const FolderEntry = ({ folder, children }: FolderEntryProps) => {
 				onClick={() => setIsOpen(!isOpen)}>
 				<FolderIcon className='folder-color' />
 				<Typography variant='h6'>{folder.name}</Typography>
+
+				{isHovered && (
+					<>
+						<FileUploadButton
+							dir_path={folder.full_path}
+							onUpload={onFileUpload}
+						/>
+						<NewFolderButton dir_path={folder.full_path} />
+					</>
+				)}
+
 				<Stack
 					direction='row'
 					justifyContent='flex-end'

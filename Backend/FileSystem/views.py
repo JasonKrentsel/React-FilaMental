@@ -4,7 +4,7 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
 from rest_framework import status
 
-from .serializers import DirectorySerializer, FileSerializer, DirectoryCreateSerializer
+from .serializers import DirectorySerializer, FileSerializer, DirectoryCreateSerializer, FileUploadSerializer
 from .models import Directory, File
 
 
@@ -55,6 +55,12 @@ class DirectoryCreateViewSet(ModelViewSet):
 
 class FileViewSet(ModelViewSet):
     serializer_class = FileSerializer
+    create_serializer_class = FileUploadSerializer  # Define a different serializer for create
+
+    def get_serializer_class(self):
+        if self.action == 'create':
+            return self.create_serializer_class
+        return super().get_serializer_class()
 
     def get_serializer_context(self):
         context = super().get_serializer_context()
@@ -62,8 +68,12 @@ class FileViewSet(ModelViewSet):
         return context
     
     def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
         directory_pk = self.kwargs['directory_pk']
-        file_name = request.data.get('file').name
+        file_data = serializer.validated_data['file']
+        file_name = file_data.name
         directory = Directory.objects.get(pk=directory_pk)
 
         # Check if a file with the same name already exists in the directory
@@ -73,7 +83,10 @@ class FileViewSet(ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST
             )
         
-        return super().create(request, *args, **kwargs)
+        new_file = File.objects.create(directory=directory, file=file_data)
+
+        serializer = self.create_serializer_class(new_file)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def get_queryset(self):
         return File.objects.filter(directory=self.kwargs['directory_pk'])

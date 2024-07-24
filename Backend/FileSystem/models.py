@@ -29,6 +29,7 @@ class File(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     
     def save(self, *args, **kwargs):
+        print(args)
         self.name = self.file.name
         self.full_path = self.directory.full_path + "-" + self.name.replace(' ', '_')
         super().save(*args, **kwargs)
