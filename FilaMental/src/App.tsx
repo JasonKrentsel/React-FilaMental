@@ -1,41 +1,10 @@
 import { Divider, List, ListItem, Stack, Typography } from "@mui/material";
-import FileSelectInterface from "./components/file-system/FileSelectInterface";
-import useFiles, { File } from "./hooks/useFiles";
 import { useState } from "react";
-import ChatInterface from "./components/chat/ChatInterface";
-import { FileRAG } from "./services/AI-response";
+import { FileDB } from "./hooks/useFiles";
+import FileExplorer from "./components/file-explorer/FileExplorer";
 
 function App() {
-	// Handle getting the files from the server
-	const { fileSystem } = useFiles();
-	const [selectedFiles, setSelectedFiles] = useState<FileRAG[]>([]);
-
-	const onFileSettingUpdate = (
-		file: File,
-		useRAG: boolean,
-		useVectorStore: boolean,
-		chunkCount: number
-	) => {
-		let newSelectedFiles = [...selectedFiles];
-
-		const fileIndex = newSelectedFiles.findIndex((f) => f.file === file);
-		if (fileIndex === -1 && useRAG) {
-			newSelectedFiles = [
-				...newSelectedFiles,
-				{ file, settings: { useVectorStore, chunkCount } },
-			];
-		} else if (fileIndex !== -1 && !useRAG) {
-			newSelectedFiles.splice(fileIndex, 1);
-		} else if (fileIndex !== -1) {
-			const newSelectedFileEntry = {
-				file,
-				settings: { useVectorStore, chunkCount },
-			};
-			newSelectedFiles[fileIndex] = newSelectedFileEntry;
-		}
-
-		setSelectedFiles(newSelectedFiles);
-	};
+	const [selectedFiles, setSelectedFiles] = useState<FileDB[]>([]);
 
 	return (
 		<>
@@ -43,9 +12,9 @@ function App() {
 				File System Rendering and Selection Test
 			</Typography>
 			<Divider />
-			<FileSelectInterface
-				fileSystem={fileSystem}
-				onFileSettingUpdate={onFileSettingUpdate}
+			<FileExplorer
+				greenSelectedFiles={selectedFiles}
+				setGreenSelectedFiles={setSelectedFiles}
 			/>
 			<Divider />
 			<Typography variant='h5'>Selected Files</Typography>
@@ -59,24 +28,10 @@ function App() {
 					</ListItem>
 				) : (
 					selectedFiles.map((file) => (
-						<Stack
-							key={file.file.full_path}
-							direction='row'
-							spacing={2}>
+						<Stack key={file.full_path} direction='row' spacing={2}>
 							<Typography variant='body1'>
-								{file.file.full_path}
+								{file.full_path}
 							</Typography>
-							<Typography variant='body1'>
-								Vector Store:{" "}
-								{file.settings.useVectorStore
-									? "Enabled"
-									: "Disabled"}
-							</Typography>
-							{file.settings.useVectorStore && (
-								<Typography variant='body1'>
-									Chunk Count: {file.settings.chunkCount}
-								</Typography>
-							)}
 						</Stack>
 					))
 				)}
@@ -84,7 +39,6 @@ function App() {
 			<Divider />
 			<Typography variant='h5'>Chat</Typography>
 			<Divider />
-			<ChatInterface selectedFiles={selectedFiles} />
 		</>
 	);
 }

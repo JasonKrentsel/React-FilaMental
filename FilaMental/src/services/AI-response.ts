@@ -1,4 +1,4 @@
-import { File } from "../hooks/useFiles";
+import { FileDB } from "../hooks/useFiles";
 
 export interface ChatMessage {
 	role: "User" | "FilaMental";
@@ -11,7 +11,7 @@ export interface RAGSettings {
 }
 
 export interface FileRAG {
-	file: File;
+	file: FileDB;
 	settings: RAGSettings;
 }
 
