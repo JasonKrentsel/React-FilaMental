@@ -1,44 +1,27 @@
-import { Box, Divider, List, ListItem, Stack, Typography } from "@mui/material";
+import { Box, Divider, Typography } from "@mui/material";
 import { useState } from "react";
 import { FileDB } from "./hooks/useFiles";
 import FileExplorer from "./components/file-explorer/FileExplorer";
+import ChatInterface from "./components/chat/ChatInterface";
+import { FileRAG } from "./services/AI-response";
+import SelectedFilesRAGSettings from "./components/settings-RAG/selectedFilesRAGSettings";
 
 function App() {
 	const [selectedFiles, setSelectedFiles] = useState<FileDB[]>([]);
+	const [filesRAG, setFilesRAG] = useState<FileRAG[]>([]);
 
 	return (
 		<Box bgcolor='AliceBlue'>
-			<Typography variant='h4'>
-				File System Rendering and Selection Test
-			</Typography>
 			<Divider />
-			<FileExplorer
-				greenSelectedFiles={selectedFiles}
-				setGreenSelectedFiles={setSelectedFiles}
-			/>
+			<FileExplorer greenSelectedFiles={selectedFiles} setGreenSelectedFiles={setSelectedFiles} />
 			<Divider />
 			<Typography variant='h5'>Selected Files</Typography>
 			<Divider />
-			<List>
-				{selectedFiles.length === 0 ? (
-					<ListItem>
-						<Typography variant='body1' color='grey'>
-							No files selected
-						</Typography>
-					</ListItem>
-				) : (
-					selectedFiles.map((file) => (
-						<Stack key={file.full_path} direction='row' spacing={2}>
-							<Typography variant='body1'>
-								{file.full_path}
-							</Typography>
-						</Stack>
-					))
-				)}
-			</List>
+			<SelectedFilesRAGSettings selectedFiles={selectedFiles} filesRAG={filesRAG} setFilesRAG={setFilesRAG} />
 			<Divider />
 			<Typography variant='h5'>Chat</Typography>
 			<Divider />
+			<ChatInterface selectedFiles={filesRAG} />
 		</Box>
 	);
 }
