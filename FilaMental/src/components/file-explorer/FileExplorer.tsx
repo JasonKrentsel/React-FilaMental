@@ -1,11 +1,12 @@
 import { useState } from "react";
 import useFiles, { Directory, FileDB } from "../../hooks/useFiles";
-import { Box, Grid, Stack, Tab, Tabs, Typography } from "@mui/material";
+import { Box, Grid, Paper, Stack, Tab, Tabs, Typography } from "@mui/material";
 import FolderCard from "./Cards/FolderCard";
 import FileCard from "./Cards/FileCard";
 import FileUploadButton from "./Buttons/FileUploadButton";
 import NewFolderButton from "./Buttons/NewFolderButton";
 import DeleteButton from "./Buttons/DeleteButton";
+import "./FileExplorer.css";
 
 interface FileExplorerProps {
 	greenSelectedFiles: FileDB[];
@@ -147,21 +148,35 @@ const FileExplorer = ({
 	if (isLoading) return <Typography>Loading...</Typography>;
 
 	return (
-		<Box width='100%' bgcolor='lightgray'>
+		<Box width='100%' bgcolor='lightgray' margin={0}>
 			<Stack width='100%'>
-				<Tabs
-					value={depth}
-					onChange={(_, newValue) => onFolderLeave(newValue)}
-					indicatorColor='primary'>
-					{currentDirectory.full_path.split("-").map((dir, index) => (
-						<Tab key={index} value={index} label={dir} />
-					))}
-				</Tabs>
+				<Paper
+					elevation={1}
+					sx={{ backgroundColor: "lightgray", borderRadius: 0 }}>
+					<Tabs
+						value={depth}
+						onChange={(_, newValue) => onFolderLeave(newValue)}
+						indicatorColor='primary'>
+						{currentDirectory.full_path
+							.split("-")
+							.map((dir, index) => (
+								<Tab key={index} value={index} label={dir} />
+							))}
+					</Tabs>
+				</Paper>
 
-				<Grid container spacing={2} height='300px'>
-					{folderCards.map((item) => item.element)}
-					{fileCards.map((item) => item.element)}
-				</Grid>
+				<Box height='300px'>
+					{folderCards.length > 0 || fileCards.length > 0 ? (
+						<Grid container spacing={1} padding={1}>
+							{folderCards.map((item) => item.element)}
+							{fileCards.map((item) => item.element)}
+						</Grid>
+					) : (
+						<Typography variant='body1' padding={2} color='grey'>
+							No files or folders in this directory
+						</Typography>
+					)}
+				</Box>
 
 				<Stack direction='row' spacing={2} margin={2}>
 					<FileUploadButton

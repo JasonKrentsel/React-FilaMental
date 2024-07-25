@@ -1,4 +1,4 @@
-import { Divider, List, ListItem, Stack, Typography } from "@mui/material";
+import { Box, Divider, List, ListItem, Stack, Typography } from "@mui/material";
 import { useState } from "react";
 import { FileDB } from "./hooks/useFiles";
 import FileExplorer from "./components/file-explorer/FileExplorer";
@@ -7,7 +7,7 @@ function App() {
 	const [selectedFiles, setSelectedFiles] = useState<FileDB[]>([]);
 
 	return (
-		<>
+		<Box bgcolor='AliceBlue'>
 			<Typography variant='h4'>
 				File System Rendering and Selection Test
 			</Typography>
@@ -22,7 +22,7 @@ function App() {
 			<List>
 				{selectedFiles.length === 0 ? (
 					<ListItem>
-						<Typography variant='body1'>
+						<Typography variant='body1' color='grey'>
 							No files selected
 						</Typography>
 					</ListItem>
@@ -39,7 +39,7 @@ function App() {
 			<Divider />
 			<Typography variant='h5'>Chat</Typography>
 			<Divider />
-		</>
+		</Box>
 	);
 }
 
