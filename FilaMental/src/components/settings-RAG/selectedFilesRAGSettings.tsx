@@ -1,14 +1,13 @@
-import { List, ListItem, Stack, TextField, Typography } from "@mui/material";
+import { IconButton, List, ListItem, Paper, Stack, Typography } from "@mui/material";
+import DeleteIcon from "@mui/icons-material/Delete";
 import { FileDB } from "../../hooks/useFiles";
-import { FileRAG } from "../../services/AI-response";
 
 interface SelectedFilesRAGSettingsProps {
 	selectedFiles: FileDB[];
-	filesRAG: FileRAG[];
-	setFilesRAG: (files: FileRAG[]) => void;
+	setSelectedFiles: (files: FileDB[]) => void;
 }
 
-const selectedFilesRAGSettings = ({ selectedFiles, filesRAG, setFilesRAG }: SelectedFilesRAGSettingsProps) => {
+const selectedFilesRAGSettings = ({ selectedFiles, setSelectedFiles }: SelectedFilesRAGSettingsProps) => {
 	return (
 		<List>
 			{selectedFiles.length === 0 ? (
@@ -19,48 +18,18 @@ const selectedFilesRAGSettings = ({ selectedFiles, filesRAG, setFilesRAG }: Sele
 				</ListItem>
 			) : (
 				selectedFiles.map((file) => (
-					<ListItem key={file.full_path}>
-						<Stack key={file.full_path} direction='row' spacing={2}>
+					<Paper key={file.full_path} sx={{ m: 1, px: 1, py: 0 }}>
+						<Stack direction='row' spacing={2} alignItems='center'>
 							<Typography variant='body1'>{file.full_path}</Typography>
-
-							<TextField
-								type='number'
-								label='Tokens per chunk'
-								variant='outlined'
-								size='small'
-								defaultValue={500}
-								onChange={(e) => {
-									const newFilesRAG = filesRAG.map((f) =>
-										f.file.full_path === file.full_path
-											? {
-													...f,
-													tokensPerChunk: Number(e.target.value),
-											  }
-											: f
-									);
-									setFilesRAG(newFilesRAG);
-								}}
-							/>
-							<TextField
-								type='number'
-								label='Token Overlap'
-								variant='outlined'
-								size='small'
-								defaultValue={100}
-								onChange={(e) => {
-									const newFilesRAG = filesRAG.map((f) =>
-										f.file.full_path === file.full_path
-											? {
-													...f,
-													tokenOverlap: Number(e.target.value),
-											  }
-											: f
-									);
-									setFilesRAG(newFilesRAG);
-								}}
-							/>
+							<IconButton
+								onClick={() => {
+									const updatedFiles = selectedFiles.filter((f) => f.full_path !== file.full_path);
+									setSelectedFiles(updatedFiles);
+								}}>
+								<DeleteIcon />
+							</IconButton>
 						</Stack>
-					</ListItem>
+					</Paper>
 				))
 			)}
 		</List>

@@ -2,14 +2,11 @@ import { Stack } from "@mui/material";
 import ChatHistoryDisplay from "./ChatHistoryDisplay";
 import QueryBar from "./QueryBar";
 import { useState } from "react";
-import {
-	ChatMessage,
-	FileRAG,
-	generateResponse,
-} from "../../services/AI-response";
+import { ChatMessage, generateResponse } from "../../services/AI-response";
+import { FileDB } from "../../hooks/useFiles";
 
 interface ChatInterfaceProps {
-	selectedFiles: FileRAG[];
+	selectedFiles: FileDB[];
 }
 
 const ChatInterface = ({ selectedFiles }: ChatInterfaceProps) => {
@@ -18,10 +15,7 @@ const ChatInterface = ({ selectedFiles }: ChatInterfaceProps) => {
 	//temporary chat submit function
 	//TODO: implement chat submission, including file context
 	const handleChatSubmit = (message: string) => {
-		const newChatHistory: ChatMessage[] = [
-			...chatHistory,
-			{ role: "User", content: message },
-		];
+		const newChatHistory: ChatMessage[] = [...chatHistory, { role: "User", content: message }];
 
 		const response = generateResponse({
 			chatHistory: newChatHistory,
@@ -39,15 +33,8 @@ const ChatInterface = ({ selectedFiles }: ChatInterfaceProps) => {
 
 	return (
 		<>
-			<Stack
-				direction='column'
-				spacing={2}
-				width='100%'
-				alignItems='center'>
-				<QueryBar
-					handleSubmit={handleChatSubmit}
-					handleClear={handleClear}
-				/>
+			<Stack direction='column' spacing={2} width='100%' alignItems='center'>
+				<QueryBar handleSubmit={handleChatSubmit} handleClear={handleClear} />
 				<ChatHistoryDisplay chatHistory={chatHistory} />
 			</Stack>
 		</>
