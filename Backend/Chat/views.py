@@ -2,6 +2,7 @@ import time
 from django.http import StreamingHttpResponse
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from .services.llm_api_service import basic_inference
 from .serializers import ChatRequestSerializer
 from FileSystem.models import File
 
@@ -18,10 +19,11 @@ class ChatView(APIView):
 
         #check if all file paths are valid
         #meaning they exist in the database
-        for file_path in file_paths:
-            if not File.objects.filter(path=file_path).exists():
-                return Response({"message": "Some file path is not valid", "files": file_paths}, status=400)
+        if(file_paths is not None and len(file_paths) > 0):
+            for file_path in file_paths:
+                if not File.objects.filter(path=file_path).exists():
+                    return Response({"message": "Some file path is not valid", "files": file_paths}, status=400)
 
-        
+        response = basic_inference(message)
 
-        return Response({"message": message, "files": file_paths})
+        return Response({"response": response, "files": file_paths})
