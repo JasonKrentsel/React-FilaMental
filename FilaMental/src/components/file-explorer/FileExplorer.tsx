@@ -13,27 +13,16 @@ interface FileExplorerProps {
 	setGreenSelectedFiles: (files: FileDB[]) => void;
 }
 
-const FileExplorer = ({
-	greenSelectedFiles,
-	setGreenSelectedFiles,
-}: FileExplorerProps) => {
-	const [currentDirectory, setCurrentDirectory] = useState<Directory>(
-		new Directory()
-	);
+const FileExplorer = ({ greenSelectedFiles, setGreenSelectedFiles }: FileExplorerProps) => {
+	const [currentDirectory, setCurrentDirectory] = useState<Directory>(new Directory());
 	const [blueSelectedFiles, setBlueSelectedFiles] = useState<FileDB[]>([]);
-	const [blueSelectedFolders, setBlueSelectedFolders] = useState<Directory[]>(
-		[]
-	);
+	const [blueSelectedFolders, setBlueSelectedFolders] = useState<Directory[]>([]);
 
 	const { isLoading } = useFiles(setCurrentDirectory);
 	const [depth, setDepth] = useState(0);
 
 	const onFolderEnter = (subdirName: string) => {
-		setCurrentDirectory(
-			currentDirectory.subdirectories.find(
-				(dir) => dir.name === subdirName
-			) as Directory
-		);
+		setCurrentDirectory(currentDirectory.subdirectories.find((dir) => dir.name === subdirName) as Directory);
 		setDepth(depth + 1);
 		setBlueSelectedFiles([]);
 	};
@@ -64,9 +53,7 @@ const FileExplorer = ({
 		stateArray: T[],
 		setStateArray: (items: T[]) => void
 	) => {
-		const newStateArray = stateArray.filter(
-			(f) => f.full_path !== item.full_path
-		);
+		const newStateArray = stateArray.filter((f) => f.full_path !== item.full_path);
 		setStateArray(newStateArray);
 	};
 
@@ -82,11 +69,7 @@ const FileExplorer = ({
 						numFiles={dir.files.length}
 						onFolderEnter={onFolderEnter}
 						onBlueSelect={() => {
-							addItemToStateArray(
-								dir,
-								blueSelectedFolders,
-								setBlueSelectedFolders
-							);
+							addItemToStateArray(dir, blueSelectedFolders, setBlueSelectedFolders);
 						}}
 					/>
 				</Grid>
@@ -106,34 +89,16 @@ const FileExplorer = ({
 				<Grid item key={file.full_path}>
 					<FileCard
 						name={file.name}
-						selectState={
-							greenSelectedFiles.includes(file) ? "green" : "none"
-						}
+						selectState={greenSelectedFiles.includes(file) ? "green" : "none"}
 						onBlueSelect={() => {
-							addItemToStateArray(
-								file,
-								blueSelectedFiles,
-								setBlueSelectedFiles
-							);
+							addItemToStateArray(file, blueSelectedFiles, setBlueSelectedFiles);
 						}}
 						onGreenSelect={() => {
-							removeItemFromStateArray(
-								file,
-								blueSelectedFiles,
-								setBlueSelectedFiles
-							);
-							addItemToStateArray(
-								file,
-								greenSelectedFiles,
-								setGreenSelectedFiles
-							);
+							removeItemFromStateArray(file, blueSelectedFiles, setBlueSelectedFiles);
+							addItemToStateArray(file, greenSelectedFiles, setGreenSelectedFiles);
 						}}
 						onDeSelect={() => {
-							removeItemFromStateArray(
-								file,
-								greenSelectedFiles,
-								setGreenSelectedFiles
-							);
+							removeItemFromStateArray(file, greenSelectedFiles, setGreenSelectedFiles);
 						}}
 					/>
 				</Grid>
@@ -150,22 +115,15 @@ const FileExplorer = ({
 	return (
 		<Box width='100%' bgcolor='lightgray' margin={0}>
 			<Stack width='100%'>
-				<Paper
-					elevation={1}
-					sx={{ backgroundColor: "lightgray", borderRadius: 0 }}>
-					<Tabs
-						value={depth}
-						onChange={(_, newValue) => onFolderLeave(newValue)}
-						indicatorColor='primary'>
-						{currentDirectory.full_path
-							.split("-")
-							.map((dir, index) => (
-								<Tab key={index} value={index} label={dir} />
-							))}
+				<Paper elevation={1} sx={{ backgroundColor: "lightgray", borderRadius: 0 }}>
+					<Tabs value={depth} onChange={(_, newValue) => onFolderLeave(newValue)} indicatorColor='primary'>
+						{currentDirectory.full_path.split("-").map((dir, index) => (
+							<Tab key={index} value={index} label={dir} />
+						))}
 					</Tabs>
 				</Paper>
 
-				<Box height='300px'>
+				<Box height='200px'>
 					{folderCards.length > 0 || fileCards.length > 0 ? (
 						<Grid container spacing={1} padding={1}>
 							{folderCards.map((item) => item.element)}
@@ -180,19 +138,12 @@ const FileExplorer = ({
 
 				<Stack direction='row' spacing={2} margin={2}>
 					<FileUploadButton
-						onUpload={(file: File) =>
-							setCurrentDirectory(
-								currentDirectory.uploadFile(file)
-							)
-						}
+						onUpload={(file: File) => setCurrentDirectory(currentDirectory.uploadFile(file))}
 					/>
 					<NewFolderButton dir_path={currentDirectory.full_path} />
 
 					{blueSelectedFiles.length > 0 && (
-						<DeleteButton
-							text={`Delete ${blueSelectedFiles.length} items`}
-							onDelete={() => {}}
-						/>
+						<DeleteButton text={`Delete ${blueSelectedFiles.length} items`} onDelete={() => {}} />
 					)}
 				</Stack>
 			</Stack>
